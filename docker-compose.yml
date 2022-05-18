@@ -1,0 +1,29 @@
+version: '3.3'
+services:
+
+    #API
+    api:
+      build: ./out_api/api1
+      image: erwankerbrat/formation_intra
+      ports:
+        - "9980:5000" 
+      environment:
+        DATABASE_URL: "mysql://root:rootpassword@db:3306/db_test"
+
+    #BDD
+    db:
+      image: erwankerbrat/copie_mysql
+      volumes:
+       - ./data-init:/docker-entrypoint-initdb.d  
+      environment:
+          MYSQL_ROOT_PASSWORD: rootpassword
+          MYSQL_DATABASE: db_test
+    dbadmin:
+      image: erwankerbrat/copie_phpmyadmin
+      environment:
+          PMA_ARBITRARY: 1
+          PMA_HOST: db
+          PMA_USER: root 
+          PMA_PASSWORD: rootpassword 
+      ports:
+        - "9981:80"
